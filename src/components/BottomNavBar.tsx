@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { moderateScale, scale } from '../utils/responsive';
 
 export type TabType = 'writer' | 'archive' | 'context';
 
@@ -15,6 +17,8 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
   onTabChange,
   archiveCount = 0,
 }) => {
+  const insets = useSafeAreaInsets();
+
   const tabs: { id: TabType; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
     { id: 'writer', label: 'Writer', icon: 'create-outline' },
     { id: 'archive', label: 'Archive', icon: 'archive-outline' },
@@ -22,7 +26,7 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
   ];
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingBottom: Math.max(insets.bottom, 8) }]}>
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
         const iconName = isActive ? (tab.icon.replace('-outline', '') as keyof typeof Ionicons.glyphMap) : tab.icon;
@@ -32,11 +36,12 @@ export const BottomNavBar: React.FC<BottomNavBarProps> = ({
             key={tab.id}
             style={styles.tabItem}
             onPress={() => onTabChange(tab.id)}
+            activeOpacity={0.7}
           >
             <View style={styles.iconContainer}>
               <Ionicons
                 name={iconName}
-                size={22}
+                size={scale(22)}
                 color={isActive ? '#10b981' : '#64748b'}
               />
               {tab.id === 'archive' && archiveCount > 0 && (
@@ -61,9 +66,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#1e293b',
     flexDirection: 'row',
-    height: 64,
-    paddingBottom: 6,
-    paddingTop: 6,
+    paddingTop: moderateScale(8),
     justifyContent: 'space-around',
     alignItems: 'center',
   },
@@ -71,6 +74,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
+    paddingVertical: moderateScale(4),
   },
   iconContainer: {
     position: 'relative',
@@ -94,7 +98,7 @@ const styles = StyleSheet.create({
   },
   tabLabel: {
     color: '#64748b',
-    fontSize: 11,
+    fontSize: moderateScale(11),
     fontWeight: '500',
     marginTop: 3,
   },

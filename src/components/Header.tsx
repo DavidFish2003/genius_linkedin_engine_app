@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { moderateScale, scale } from '../utils/responsive';
 
 interface HeaderProps {
   title?: string;
@@ -11,11 +13,13 @@ export const Header: React.FC<HeaderProps> = ({
   title = 'GENIUS LinkedIn Studio',
   subtitle = 'Authentic AI Engine for Fisayo',
 }) => {
+  const insets = useSafeAreaInsets();
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: Math.max(insets.top, 12) + 6 }]}>
       <View style={styles.titleRow}>
         <View style={styles.logoBadge}>
-          <Ionicons name="sparkles" size={20} color="#10b981" />
+          <Ionicons name="sparkles" size={scale(20)} color="#10b981" />
         </View>
         <View style={styles.titleContainer}>
           <Text style={styles.titleText}>{title}</Text>
@@ -34,9 +38,8 @@ export const Header: React.FC<HeaderProps> = ({
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#0f172a',
-    paddingHorizontal: 16,
-    paddingTop: 14,
-    paddingBottom: 14,
+    paddingHorizontal: moderateScale(16),
+    paddingBottom: moderateScale(12),
     borderBottomWidth: 1,
     borderBottomColor: '#1e293b',
     flexDirection: 'row',
@@ -46,13 +49,13 @@ const styles = StyleSheet.create({
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: moderateScale(10),
     flex: 1,
   },
   logoBadge: {
-    width: 38,
-    height: 38,
-    borderRadius: 10,
+    width: moderateScale(38),
+    height: moderateScale(38),
+    borderRadius: scale(10),
     backgroundColor: 'rgba(16, 185, 129, 0.12)',
     borderWidth: 1,
     borderColor: 'rgba(16, 185, 129, 0.3)',
@@ -64,21 +67,21 @@ const styles = StyleSheet.create({
   },
   titleText: {
     color: '#f8fafc',
-    fontSize: 18,
+    fontSize: moderateScale(17),
     fontWeight: '700',
     letterSpacing: 0.3,
   },
   subtitleText: {
     color: '#94a3b8',
-    fontSize: 11,
+    fontSize: moderateScale(11),
     marginTop: 1,
   },
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#1e293b',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingHorizontal: moderateScale(10),
+    paddingVertical: moderateScale(5),
     borderRadius: 20,
     borderWidth: 1,
     borderColor: 'rgba(16, 185, 129, 0.25)',
@@ -92,7 +95,7 @@ const styles = StyleSheet.create({
   },
   statusText: {
     color: '#34d399',
-    fontSize: 11,
+    fontSize: moderateScale(11),
     fontWeight: '600',
   },
 });

@@ -2,15 +2,14 @@ import React, { useState } from 'react';
 import {
   StyleSheet,
   View,
-  SafeAreaView,
   StatusBar,
   ScrollView,
   Text,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  Alert,
 } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Header } from './src/components/Header';
 import { DraftInput } from './src/components/DraftInput';
 import { QuickActions, ActionType } from './src/components/QuickActions';
@@ -24,6 +23,7 @@ import {
   sharpenHook,
   micDropMode,
 } from './src/services/gemini';
+import { moderateScale } from './src/utils/responsive';
 
 export default function App() {
   const [draft, setDraft] = useState<string>('');
@@ -111,88 +111,91 @@ export default function App() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="light-content" backgroundColor="#0f172a" />
-      <Header title="GENIUS LinkedIn Studio" subtitle="Authentic Voice AI for Fisayo" />
+    <SafeAreaProvider>
+      <View style={styles.rootContainer}>
+        <StatusBar barStyle="light-content" backgroundColor="#0f172a" translucent={false} />
+        <Header title="GENIUS LinkedIn Studio" subtitle="Authentic Voice AI for Fisayo" />
 
-      <KeyboardAvoidingView
-        style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        {activeTab === 'writer' && (
-          <ScrollView
-            style={styles.scrollContainer}
-            contentContainerStyle={styles.scrollContent}
-            keyboardShouldPersistTaps="handled"
-          >
-            {/* Error Banner */}
-            {errorMessage && (
-              <TouchableOpacity
-                style={styles.errorBanner}
-                onPress={() => setErrorMessage(null)}
-              >
-                <Text style={styles.errorText}>{errorMessage}</Text>
-                <Text style={styles.errorDismiss}>Dismiss</Text>
-              </TouchableOpacity>
-            )}
+        <KeyboardAvoidingView
+          style={styles.mainContainer}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+          {activeTab === 'writer' && (
+            <ScrollView
+              style={styles.scrollContainer}
+              contentContainerStyle={styles.scrollContent}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+            >
+              {/* Error Banner */}
+              {errorMessage && (
+                <TouchableOpacity
+                  style={styles.errorBanner}
+                  onPress={() => setErrorMessage(null)}
+                >
+                  <Text style={styles.errorText}>{errorMessage}</Text>
+                  <Text style={styles.errorDismiss}>Dismiss</Text>
+                </TouchableOpacity>
+              )}
 
-            {/* Input Box */}
-            <DraftInput
-              value={draft}
-              onChangeText={(text) => {
-                setDraft(text);
-                if (errorMessage) setErrorMessage(null);
-              }}
-              onClear={() => {
-                setOutput('');
-                setErrorMessage(null);
-              }}
+              {/* Input Box */}
+              <DraftInput
+                value={draft}
+                onChangeText={(text) => {
+                  setDraft(text);
+                  if (errorMessage) setErrorMessage(null);
+                }}
+                onClear={() => {
+                  setOutput('');
+                  setErrorMessage(null);
+                }}
+              />
+
+              {/* Quick Actions Row */}
+              <QuickActions
+                onSelectAction={handleAction}
+                activeAction={activeAction}
+                loading={loading}
+              />
+
+              {/* Formatted Output Card */}
+              <OutputCard
+                output={output}
+                actionTitle={actionTitle}
+                onSaveToArchive={handleSaveToArchive}
+              />
+            </ScrollView>
+          )}
+
+          {activeTab === 'archive' && (
+            <ArchiveScreen
+              archive={archive}
+              onLoadIntoDraft={handleLoadIntoDraft}
+              onDeleteFromArchive={handleDeleteFromArchive}
+              onClearArchive={handleClearArchive}
             />
+          )}
 
-            {/* Quick Actions Row */}
-            <QuickActions
-              onSelectAction={handleAction}
-              activeAction={activeAction}
-              loading={loading}
-            />
+          {activeTab === 'context' && <ContextBaseScreen />}
+        </KeyboardAvoidingView>
 
-            {/* Formatted Output Card */}
-            <OutputCard
-              output={output}
-              actionTitle={actionTitle}
-              onSaveToArchive={handleSaveToArchive}
-            />
-          </ScrollView>
-        )}
-
-        {activeTab === 'archive' && (
-          <ArchiveScreen
-            archive={archive}
-            onLoadIntoDraft={handleLoadIntoDraft}
-            onDeleteFromArchive={handleDeleteFromArchive}
-            onClearArchive={handleClearArchive}
-          />
-        )}
-
-        {activeTab === 'context' && <ContextBaseScreen />}
-      </KeyboardAvoidingView>
-
-      {/* Bottom Navigation */}
-      <BottomNavBar
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        archiveCount={archive.length}
-      />
-    </SafeAreaView>
+        {/* Bottom Navigation */}
+        <BottomNavBar
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          archiveCount={archive.length}
+        />
+      </View>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
+  rootContainer: {
     flex: 1,
     backgroundColor: '#0f172a',
   },
-  container: {
+  mainContainer: {
     flex: 1,
     backgroundColor: '#0f172a',
   },
@@ -200,28 +203,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 20,
+    paddingBottom: moderateScale(24),
   },
   errorBanner: {
     backgroundColor: 'rgba(239, 68, 68, 0.15)',
     borderColor: 'rgba(239, 68, 68, 0.4)',
     borderWidth: 1,
     borderRadius: 8,
-    padding: 12,
-    marginHorizontal: 16,
-    marginTop: 10,
+    padding: moderateScale(12),
+    marginHorizontal: moderateScale(16),
+    marginTop: moderateScale(10),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
   errorText: {
     color: '#fca5a5',
-    fontSize: 12,
+    fontSize: moderateScale(12),
     flex: 1,
   },
   errorDismiss: {
     color: '#ef4444',
-    fontSize: 11,
+    fontSize: moderateScale(11),
     fontWeight: '700',
     marginLeft: 8,
   },
