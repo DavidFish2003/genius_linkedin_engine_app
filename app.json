@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "GENIUS LinkedIn Studio",
+    "slug": "genius-builds",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#0f172a"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.fisayo.geniuslinkedinstudio"
+    },
+    "android": {
+      "package": "com.fisayo.geniusstudio",
+      "adaptiveIcon": {
+        "backgroundColor": "#0f172a",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1759a3a6-b8ee-42e9-bf13-97f458ca72bf"
+      }
+    },
+    "owner": "genius1s-team"
+  }
+}
